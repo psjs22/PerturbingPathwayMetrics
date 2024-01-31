@@ -2,14 +2,9 @@
 %%%%%%%%%%%%%%%%%%%%%%% MONARCH BUTTERFLY EXAMPLE 2 %%%%%%%%%%%%%%%%%%%%%%%
 
 clear all; close all;
-% Compute matrices for model mm in {1,2,3,4,5,6,7,8,9} 
+% Compute matrices for unperturbed model mm in {1,2,3,4,5,6,7,8,9} 
 mm = 6; % specify migratory model
 [A,Ahat,n,c,s,mP,D,P,S,M,mD,mS,mM] = MigModel(mm);
-
-x = [0; 8375000; 8375000; 0; 0;...
-     0; 0; 0; 0; 0;...
-     0; 0; 0; 0; 0;...
-     0; 0; 0; 0; 0];  % initial population vector 
 
 % SPECIFYING A PATH IN JUST ONE SEASON --- RUN THROUGH ALL OPTIONS
 % unperturbed contribution metrics given in Smith et al. 2022
@@ -81,6 +76,7 @@ for kk = 1:s
         E = zeros(n); E(jj,jj) = 1;     
         pmD(:,:,kk) = pmD(:,:,kk) + kron(E,pD(:,1+c*(jj-1):c*jj,kk));
     end 
+    
     % update movement matrces mP, mS and mM
     for ii = 1:c 
         E = zeros(c); E(ii,ii) = 1;  
@@ -88,6 +84,7 @@ for kk = 1:s
         pmS(:,:,kk) = pmS(:,:,kk) + kron(pS(:,1+n*(ii-1):n*ii,kk),E);
         pmM(:,:,kk) = pmM(:,:,kk) + kron(pM(:,1+n*(ii-1):n*ii,kk),E);
     end
+    
     % update A and Ahat matrices
     pA(:,:,kk) = pmD(:,:,kk)*pmM(:,:,kk); % movement happens first
     pAhat(:,:,kk) = pmD(:,:,kk)*pmS(:,:,kk); % movement happens first 
@@ -114,8 +111,7 @@ for  kk = 1:s
         pChP = Cp2Ch(c,n,s,pmP,Phi,PATH(:,:,kk),pCP(:,:,kk));
     end 
 end
-
-%%% CHANGE IN CONTRIBUTION METRICS FOLLOWING THREATS
+% Change in contribution metrics following threats
 CP_change = pCP - CP;
 CPtilde_change = pCPtilde - CPtilde;
 CpAvOS_change = pCpAvOS - CpAvOS;
@@ -239,18 +235,17 @@ for kk = 1:s
         p2ChP = Cp2Ch(c,n,s,p2mP,Phi,PATH(:,:,kk),p2CP(:,:,kk));
     end  
 end
-
-%%% CHANGE IN CONTRIBUTION METRICS FOLLOWING THREATS AND CONSERVATION
+% Change in contribution metrics following threats and conservation
 CP_change2 = p2CP - CP;
 CPtilde_change2 = p2CPtilde - CPtilde;
 CpAvOS_change2 = p2CpAvOS - CpAvOS;
 CpAvOH_change2 = p2CpAvOS - CpAvOS;
 ChP_change2 = p2ChP - ChP;
 
-
 %% Plot C-metrics all on one plot
 
 % condense the C-metrics so that only non-zero rows are stored
+% non-zero entries are equal to each other 
 cCP = [];
 cpCP = [];
 cp2CP = [];
@@ -269,6 +264,7 @@ cp2CpAvOH = [];
 cCpAvOS = [];
 cpCpAvOS = [];
 cp2CpAvOS = [];
+
 for kk = 1:s
     for ii = 1:height(CP)
         if any(CP(ii,:,kk)) % there is a non-zero entry in row ii 
@@ -316,63 +312,26 @@ xCP = xCP+0.33;
 xCPtilde = 1:height(cCP);
 xCPtilde = xCPtilde +0.67;
 
-% figure(1)
-% %
-% plot(xCP,cCP,'.','MarkerFaceColor',[0 0.4470 0.7410],'MarkerSize',10); 
-% hold on;
-% plot(xCP,cpCP,'_','MarkerFaceColor',[0 0.4470 0.7410]);
-% hold on;
-% plot(xCP,cp2CP,'+','MarkerFaceColor',[0 0.4470 0.7410]);
-% hold on;
-% %
-% plot(xCPtilde,cCPtilde,'.','MarkerFaceColor',[0.8500 0.3250 0.0980],'MarkerSize',10); 
-% hold on;
-% plot(xCPtilde,cpCPtilde,'_','MarkerFaceColor',[0.8500 0.3250 0.0980]);
-% hold on;
-% plot(xCPtilde,cp2CPtilde,'+','MarkerFaceColor',[0.8500 0.3250 0.0980]);
-% hold on;
-% % 
-% plot(0.5,ChP(2),'.','MarkerFaceColor',[0.4940 0.1840 0.5560],'MarkerSize',10);
-% hold on;
-% plot(0.5,pChP(2),'_','MarkerFaceColor',[0.4940 0.1840 0.5560])
-% hold on;
-% plot(0.5,p2ChP(2),'+','MarkerFaceColor',[0.4940 0.1840 0.5560])
-% hold on;
-% %
-% % plot(30,cCpAvOH,'.','MarkerFaceColor',[0.4660 0.6740 0.1880],'MarkerSize',10);
-% % hold on;
-% % plot(30,cpCpAvOH,'_','MarkerFaceColor',[0.4660 0.6740 0.1880])
-% % hold on;
-% % plot(30,cp2CpAvOH,'+','MarkerFaceColor',[0.4660 0.6740 0.1880])
-% % hold on;
-% % %
-% % plot(31,cCpAvOS,'.','MarkerFaceColor',[0.6350 0.0780 0.1840],'MarkerSize',10);
-% % hold on;
-% % plot(31,cpCpAvOS,'_','MarkerFaceColor',[0.6350 0.0780 0.1840])
-% % hold on;
-% % plot(31,cp2CpAvOS,'+','MarkerFaceColor',[0.6350 0.0780 0.1840])
-% % hold on;
-% %
-% grid on
-% grid minor
 
-
-figure(2)
-plot(0:29,zeros(30),'k')
+figure(1)
+plot(0:29,zeros(30),'k')     % x=0
 hold on;
-%
+% plot the change in subpopulation contribution metrics following threats for each individual pathway
 plot(xCP,cCP_change,'v','MarkerEdgeColor',[0 0.4470 0.7410],'MarkerFaceColor',[0 0.4470 0.7410],'MarkerSize',5);
 hold on;
+% plot the change in subpopulation contribution metrics following threats and conservation for each individual pathway
 plot(xCP,cCP_change2,'^','MarkerEdgeColor',[0 0.4470 0.7410],'MarkerFaceColor',[0 0.4470 0.7410],'MarkerSize',5);
 hold on;
-%
+% plot the change in metapopulation contribution metrics following threats for each individual pathway
 plot(xCPtilde,cCPtilde_change,'v','MarkerEdgeColor',[0.8500 0.3250 0.0980],'MarkerFaceColor',[0.8500 0.3250 0.0980],'MarkerSize',5);
 hold on;
+% plot the change in metapopulation contribution metrics following threats and conservation for each individual pathway
 plot(xCPtilde,cCPtilde_change2,'^','MarkerEdgeColor',[0.8500 0.3250 0.0980],'MarkerFaceColor',[0.8500 0.3250 0.0980],'MarkerSize',5);
 hold on;
-% 
+% plot the change in habitat contribution metrics following threats
 plot(0.5,ChP_change(2),'v','MarkerEdgeColor','k','MarkerFaceColor','k','MarkerSize',5)
 hold on;
+% plot the change in habitat contribution metrics following threats and conservation
 plot(0.5,ChP_change2(2),'^','MarkerEdgeColor','k','MarkerFaceColor','k','MarkerSize',5)
 hold on;
 %
