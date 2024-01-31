@@ -19,3 +19,4 @@ Use file MonarchExamplePPCM.m to compute sensitivities and elasticities of contr
 Use file sensLambdaMonarch.m to compute sensitivities and elasticities of asymptotic growth rate. 
 
 Example 3.4: Monarch Butterfly Model Threats and Proposed Management Actions
+Use file MonarchExamplePPCM2.m to compute change in contribution metrics following threats and threats and conservation. Plot figure 
