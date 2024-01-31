@@ -2,10 +2,11 @@
 %%%%%%%%%%%%%%%%%%%%%%%% MONARCH BUTTERFLY EXAMPLE %%%%%%%%%%%%%%%%%%%%%%%%
 
 clear all; close all;
-% Compute matrices for model mm in {1,2,3,4,5,6,7,8,9} 
+% Compute matrices for unperturbed model mm in {1,2,3,4,5,6,7,8,9} 
 mm = 6; % specify migratory model
 [A,Ahat,n,c,s,mP,D,P,S,M,mD,mS,mM] = MigModel(mm);
 
+% unperturbed annual cycle matrix 
 AA = eye(c*n);
 for kk = 1:s
     AA = A(:,:,kk)*AA;  % full annual cycle matrix, \sA
@@ -19,7 +20,6 @@ lambda = lambda(maxpos,maxpos); % dominant eigenvalue
 W = W(:,maxpos);    % dominant right eigenvector
 
 %% structural matrices and constants in the sensitivity formula
-
 % independent of path
 K = zeros(c*n); % vec permutation matrix K_{c,n}
 for i=1:c
@@ -72,9 +72,9 @@ vecIn = reshape(eye(n),n*n,1);
 % MIGRATION HAPPENS BEFORE DEMOGRAPHY => PATH(i,7) indicates which
 % habitat's life rates will influence the Cmetrics
 
-% for PATH([1,3],:) interested in D_{3,6}
+% for PATH([1,3],:) interested in D_{3,6} (end season 6 in habitat 3)
 D_36 = D(:,(3-1)*c+1:3*c,6);
-% for PATH([2,4],:) interested in D_{4,6}
+% for PATH([2,4],:) interested in D_{4,6} (end season 6 in habitat 4)
 D_46 = D(:,(4-1)*c+1:4*c,6);
 
 % sensitivity formula for perturbations to D_{3,6} life rates
@@ -90,9 +90,9 @@ vecE33 = reshape(E33,n*n,1);
 for pp = 1:7 %number of non-zero entries in D_36
     syms d      %act as delta 
     if pp==1 % perturbation is to D_36(1,3)
-        % location of perturbation
-        ploc = [0 0 d 0 0; 0 0 0 0 0; 0 0 0 0 0; 0 0 0 0 0; 0 0 0 0 0]; 
-        % 1% of life rate for elasticity substitutions
+            % location of perturbation
+            ploc = [0 0 d 0 0; 0 0 0 0 0; 0 0 0 0 0; 0 0 0 0 0; 0 0 0 0 0]; 
+            % 1% of life rate for elasticity substitutions
             deltasub = 268*0.01;
         elseif pp==2 % perturbation is to D_36(1,4)
             % location of perturbation
@@ -131,19 +131,21 @@ for pp = 1:7 %number of non-zero entries in D_36
     dvecA6D3 = (Z1k(:,:,6)*X1*kron(vecE33,diff(vecDp_36))).*Z3k;
     dvecAAD3 = kronYY*dvecA6D3;
 
+    % sensitivity of the asymptotic growth rate when D_{3,6} is perturbed 
     D36sensLambda(:,pp) = (kron(W',V')/(V'*W))*dvecAAD3;
-
+    % elasticity of the asymptotic growth rate when D_{3,6} is perturbed 
     D36elasLambda(:,pp) = d/lambda*D36sensLambda(:,pp);
+    % Substituting each \delta to be 1% of the life rate it is perturbing
     D36SUBSelasLambda = subs(D36elasLambda,d,deltasub);
 end            
 
 %%
 % sensitivity formula for pertrubations to D_{4,6} life rates 
 D46sensLambda = sym(zeros(1,7)); % 7 is number of non zero life rates
-% elasticity formula for perturbations to D_{3,6} life rates
+% elasticity formula for perturbations to D_{4,6} life rates
 D46elasLambda = sym(zeros(1,7)); % 7 is number of non zero life rates
-% perturbing life rates in D_36 one at a time
-% constants used in all perturbations to D_36
+% perturbing life rates in D_46 one at a time
+% constants used in all perturbations to D_46
 E44 = zeros(n); E44(4,4)=1; % matrix E_{n,jj} j=4
 vecE44 = reshape(E44,n*n,1);
    
@@ -151,9 +153,9 @@ vecE44 = reshape(E44,n*n,1);
 for pp = 1:7 %number of non-zero entries in D_46
     syms d      %act as delta 
     if pp==1 % perturbation is to D_46(1,3)
-        % location of perturbation
-        ploc = [0 0 d 0 0; 0 0 0 0 0; 0 0 0 0 0; 0 0 0 0 0; 0 0 0 0 0]; 
-        % 1% of life rate for elasticity substitutions
+            % location of perturbation
+            ploc = [0 0 d 0 0; 0 0 0 0 0; 0 0 0 0 0; 0 0 0 0 0; 0 0 0 0 0]; 
+            % 1% of life rate for elasticity substitutions
             deltasub = 268*0.01;
         elseif pp==2 % perturbation is to D_36(1,4)
             % location of perturbation
@@ -192,16 +194,17 @@ for pp = 1:7 %number of non-zero entries in D_46
 
     dvecA6D4 = (Z1k(:,:,6)*X1*kron(vecE44,diff(vecDp_46))).*Z3k;
     dvecAAD4 = kronYY*dvecA6D4;
-
+    % sensitivity of the asymptotic growth rate when D_{4,6} is perturbed 
     D46sensLambda(:,pp) = (kron(W',V')/(V'*W))*dvecAAD4;
-
+    % elasticity of the asymptotic growth rate when D_{4,6} is perturbed 
     D46elasLambda(:,pp) = d/lambda*D46sensLambda(:,pp);
+    % Substituting each \delta to be 1% of the life rate it is perturbing
     D46SUBSelasLambda = subs(D46elasLambda,d,deltasub);
 end       
 
 %% SENSITIVITY OF LAMBDA WITH RESPECT TO MOVEMENT SURVIVAL RATES
 % MIGRATION HAPPENS BEFORE DEMOGRAPHY
-% assume stages 1, 2 and 3 cannnot alter their movement survival rates
+% assume stages 1, 2 and 3 cannnot alter their movement survival rates (they are 0 or 1)
 % there are 3 life rates that could change in both stage 4 and 5, so we
 % will do a total of 6 perturbations
 
@@ -243,8 +246,11 @@ for pp = 1:6
         dvecA6S4 = (X2k(:,:,6)*((X1*kron(diff(vecSp46),vecEcii)).*vecmP6)).*Z3k;
         dvecAAS4 = kronYY*dvecA6S4;
 
+        % sensitivity of the asymptotic growth rate when S^4_6 is perturbed 
         S46sensLambda(:,pp) = (kron(W',V')/(V'*W))*dvecAAS4;
+        % elasticity of the asymptotic growth rate when S^4_6 is perturbed
         S46elasLambda(:,pp) = d/lambda*S46sensLambda(:,pp);
+        % Substituting each \delta to be 1% of the life rate it is perturbing
         S46SUBSelasLambda = subs(S46elasLambda,d,deltasub);
 
     else % last 3 perturbations will be to stage 5
@@ -271,8 +277,11 @@ for pp = 1:6
         dvecA6S5 = (X2k(:,:,6)*((X1*kron(diff(vecSp56),vecEcii)).*vecmP6)).*Z3k;
         dvecAAS5 = kronYY*dvecA6S5;
 
+        % sensitivity of the asymptotic growth rate when S^5_6 is perturbed
         S56sensLambda(:,pp-3) = (kron(W',V')/(V'*W))*dvecAAS5;
+        % elasticity of the asymptotic growth rate when S^4_6 is perturbed
         S56elasLambda(:,pp-3) = d/lambda*S56sensLambda(:,pp-3);
+        % Substituting each \delta to be 1% of the life rate it is perturbing
         S56SUBSelasLambda = subs(S56elasLambda,d,deltasub);
     end
 end 
@@ -321,8 +330,11 @@ for pp = 1:2
     dvecA6P4 = (Z2k(:,:,6)*(vecmS6.*(X1*kron(diff(vecPp46),vecEcii)))).*Z3k;
     dvecAAP4 = kronYY*dvecA6P4;
     
+    % sensitivity of the asymptotic growth rate when P^4_6 is perturbed
     P46sensLambda(:,pp) = (kron(W',V')/(V'*W))*dvecAAP4;
+    % elasticity of the asymptotic growth rate when P^4_6 is perturbed
     P46elasLambda(:,pp) = d/lambda*P46sensLambda(:,pp);
+    % Substituting each \delta to be 1% of the life rate it is perturbing
     P46SUBSelasLambda = subs(P46elasLambda,d,deltasub);
 
     Ecii = zeros(c); Ecii(5,5)=1; %matrix E_{c,ii} i=5
@@ -334,13 +346,16 @@ for pp = 1:2
     dvecA6P5 = (Z2k(:,:,6)*(vecmS6.*(X1*kron(diff(vecPp56),vecEcii)))).*Z3k;
     dvecAAP5 = kronYY*dvecA6P5;
     
+    % sensitivity of the asymptotic growth rate when P^5_6 is perturbed
     P56sensLambda(:,pp) = (kron(W',V')/(V'*W))*dvecAAP5;
+    % elasticity of the asymptotic growth rate when P^5_6 is perturbed
     P56elasLambda(:,pp) = d/lambda*P56sensLambda(:,pp);
+    % Substituting each \delta to be 1% of the life rate it is perturbing
     P56SUBSelasLambda = subs(P56elasLambda,d,deltasub);
 end 
 
 
-%% CALCULATING BY SPECIFYING DELTA SMALL 
+%% COMMON SENSE CHECK -- CALCULATING BY SPECIFYING DELTA SMALL 
 d = [-0.000000000001,0.000000000001];% possible values of delta
 %% HOW PERTURBATIONS TO DEMOGRAPHY AFFECT ASYMPTOTICS
 % annual cycle matrix following perturbations to D_{3,6} life rates
@@ -456,33 +471,10 @@ for pp = 1:7  %number of non-zero entries in D_36 and D_46
             end
         end
         
-%         if pp == 1 || pp == 2 || pp == 3    % reproductive life rates 
-%             figure(1)
-%             subplot(1,2,1)
-%             plot(d,lambdaD36sA(:,pp),'LineWidth',2)
-%             hold on
-%             plot(d,lambdaD46sA(:,pp),'--','LineWidth',2)
-%         else 
-%             figure(1)
-%             subplot(1,2,2)
-%             plot(d,lambdaD36sA(:,pp),'LineWidth',2)
-%             hold on
-%             plot(d,lambdaD46sA(:,pp),'--','LineWidth',2)
-%         end 
-        
         % estimate of slope at delta = 0 
         senslambdaD36(pp) = (lambdaD36sA(1,pp)-lambdaD36sA(2,pp))/(d(1)-d(2));
         senslambdaD46(pp) = (lambdaD46sA(1,pp)-lambdaD46sA(2,pp))/(d(1)-d(2));
-
-%         elaslambdaD36(pp) = (d/Cptilde(ll,ii))*P56sensCPtildestart(ii,pp,ll);        
 end
-% 
-% figure(1)
-% subplot(1,2,1)
-% legend('delta1D36','delta1D46','delta2D36','delta2D46','delta3D36','delta3D46')
-% hold on
-% subplot(1,2,2)
-% legend('delta4D36','delta4D46','delta5D36','delta5D46','delta6D36','delta6D46','delta7D36','delta7D46')
 
 %% HOW PERTRUBATIONS TO MOVEMENT SURVIVAL AFFECT ASYMPTOTICS 
 % annual cycle matrix following perturbations to S^i_6, where i \in {4,5}
@@ -538,23 +530,12 @@ for pp = 1:3  %number of entries in S^4_6 and S^5_6 subject to perturbation
                 S56sA = Y127*mD(:,:,6)*(pS56mS.*mP(:,:,6))*Y51;
                 lambdaS56sA(dd,pp) = max(abs(eig(S56sA)));
             end
-        end
-        
-%         figure(2)
-%         plot(d,lambdaS46sA(:,pp),'LineWidth',2)
-%         hold on
-%         plot(d,lambdaS56sA(:,pp),'--','LineWidth',2)
-%         hold on
-%         
+        end     
        
         % estimate of slope at delta = 0 
         senslambdaS46(pp) = (lambdaS46sA(1,pp)-lambdaS46sA(2,pp))/(d(1)-d(2));
-        senslambdaS56(pp) = (lambdaS56sA(1,pp)-lambdaS56sA(2,pp))/(d(1)-d(2));
-        
+        senslambdaS56(pp) = (lambdaS56sA(1,pp)-lambdaS56sA(2,pp))/(d(1)-d(2));      
 end
-
-% figure(2)
-% legend('delta1S46','delta1S56','delta2S46','delta2S56','delta3S46','delta3S56')
 
 %% HOW PERTRUBATIONS TO MOVEMENT PROPORTION AFFECT ASYMPTOTICS 
 % annual cycle matrix following perturbations to P^i_6, where i \in {4,5}
@@ -612,21 +593,9 @@ for pp = 1:2  %number of deltas that perturb P^4_6 and P^5_6
                 P56sA = Y127*mD(:,:,6)*(mS(:,:,6).*pP56mP)*Y51;
                 lambdaP56sA(dd,pp) = max(abs(eig(P56sA)));
             end
-        end
-        
-%         figure(3)
-%         plot(d,lambdaP46sA(:,pp),'LineWidth',2)
-%         hold on
-%         plot(d,lambdaP56sA(:,pp),'--','LineWidth',2)
-%         hold on
-%         
+        end      
         % estimate of slope at delta = 0 
         senslambdaP46(pp) = (lambdaP46sA(1,pp)-lambdaP46sA(2,pp))/(d(1)-d(2));
         senslambdaP56(pp) = (lambdaP56sA(1,pp)-lambdaP56sA(1,pp))/(d(1)-d(2));
         
 end
-
-% figure(3)
-% legend('delta1P46','delta1P56','deltaPS46','deltaPS56')
-
-
