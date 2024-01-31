@@ -2,7 +2,7 @@ function [Cp,Cptilde,AAhat,AAhatP] = ...
     PathwayMetrics(c,n,s,A,Ahat,Phi,PATH,mP)
 % Compute pathway metrics for PATH
 % Cp contains the subpopulation pathway contribution metrics. See (2.12) in
-% the paper.
+% the paper https://doi.org/10.1016/j.ecolmodel.2022.110056
 % Cptilde contains the metapopulation pathway contribution metrics. See
 % (2.13) in the paper. 
 % AAhat contains the product of the seasonal and/or seasonal survival
@@ -13,9 +13,9 @@ function [Cp,Cptilde,AAhat,AAhatP] = ...
 % in the paper.
 
 AAhat = zeros(c*n,c*n,size(PATH,1)); % to store product of A and Ahat matrices for each distinct path
-AAhatP = zeros(c*n,c*n,size(PATH,1)); 
-Cp = zeros(size(PATH,1),c*n); % to store pathway metrics for each distinct path
-Cptilde = zeros(size(PATH,1),c*n);
+AAhatP = zeros(c*n,c*n,size(PATH,1)); % to store product of A, Ahat and \bP matrices for each distinct path
+Cp = zeros(size(PATH,1),c*n); % to store subpopulation pathway metrics for each distinct path
+Cptilde = zeros(size(PATH,1),c*n); % to store metapopulation pathway metrics for each distinct path
 
 for cc = 1:size(PATH,1) % work through all distinct paths
     
