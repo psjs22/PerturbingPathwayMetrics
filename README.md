@@ -10,13 +10,15 @@ PathwayMetrics.m is a MATLAB function file that computes the subpopulation pathw
 
 These two MATLAB function files are used in the MATLAB scripts that generate the examples in the paper. 
 
-Example 3.1: Simple Hypothetical Model Perturbation Framework 
+Example 3.1: Simple Hypothetical Model Perturbation Framework: 
+Use file pertCmetrics.m to compute the change in contribution metrics using the perturbation framework. 
 
-Example 3.2: Simple Hypothetical Model Sensitivity Framework 
+Example 3.2: Simple Hypothetical Model Sensitivity Framework:
+Use file sensCmetrics.m to compute sensitivities and elasticities of the contribution metrics.
 
-Example 3.3: Monarch Butterfly Model Sensitivity of Life Rates in Season 6
-Use file MonarchExamplePPCM.m to compute sensitivities and elasticities of contribution metrics.
-Use file sensLambdaMonarch.m to compute sensitivities and elasticities of asymptotic growth rate. 
+Example 3.3: Monarch Butterfly Model Sensitivity of Life Rates in Season 6:
+Use file MonarchExamplePPCM.m to compute sensitivities and elasticities of the contribution metrics.
+Use file sensLambdaMonarch.m to compute sensitivities and elasticities of the asymptotic growth rate. 
 
-Example 3.4: Monarch Butterfly Model Threats and Proposed Management Actions
+Example 3.4: Monarch Butterfly Model Threats and Proposed Management Actions:
 Use file MonarchExamplePPCM2.m to compute change in contribution metrics following threats and threats and conservation. Plot figure 
