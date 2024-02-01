@@ -12,10 +12,10 @@ function [Cp,Cptilde,AAhat,AAhatP] = ...
 % population using the specified path. See (2.13) and next two equations 
 % in the paper.
 
-AAhat = zeros(c*n,c*n,size(PATH,1)); % to store product of A and Ahat matrices for each distinct path
-AAhatP = zeros(c*n,c*n,size(PATH,1)); % to store product of A, Ahat and \bP matrices for each distinct path
-Cp = zeros(size(PATH,1),c*n); % to store subpopulation pathway metrics for each distinct path
-Cptilde = zeros(size(PATH,1),c*n); % to store metapopulation pathway metrics for each distinct path
+AAhat = sym(zeros(c*n,c*n,size(PATH,1))); % to store product of A and Ahat matrices for each distinct path
+AAhatP = sym(zeros(c*n,c*n,size(PATH,1))); % to store product of A, Ahat and \bP matrices for each distinct path
+Cp = sym(zeros(size(PATH,1),c*n)); % to store subpopulation pathway metrics for each distinct path
+Cptilde = sym(zeros(size(PATH,1),c*n)); % to store metapopulation pathway metrics for each distinct path
 
 for cc = 1:size(PATH,1) % work through all distinct paths
     
