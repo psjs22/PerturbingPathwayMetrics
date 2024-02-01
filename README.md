@@ -8,7 +8,11 @@ PathwayMetrics.m is a MATLAB function file that computes the subpopulation pathw
   Inputs are: c (the number of stage classes); n (the number of habitats/patches); s (the number of seasons); A (the seasonal matrix); Ahat (the seasonal survival matrix); Phi (stores the seasons in which a path is specified); PATH (stores the pathways of interest); mP (contains all \mP_k the block matrices of the proportion of individuals migrating).
   Outputs are: Cp (the subpopulation pathway contribution metrics); Cptilde (the metapopulation pathway contribution metrics); AAhat (the product of the A and Ahat matrices for the specified path); AAhatP (the product of the A, Ahat and P matrices for the specified path).
 
-These two MATLAB function files are used in the MATLAB scripts that generate the examples in the paper. 
+DistinctPaths.m is a MATLAB function file that computes a matrix containing all the distinct paths for a model with s seasons in the annual cycle and n habitats.
+  Inputs are: n (the number of habitats/patches); s (the number of seasons); sp (the seasons that have paths specified).
+  Output PATH is a matrix whose rows contain the distinct pathways.
+
+These three MATLAB function files are used in the MATLAB scripts that generate the examples in the paper. 
 
 Example 3.1: Simple Hypothetical Model Perturbation Framework: 
 Use file pertCmetrics.m to compute the change in contribution metrics using the perturbation framework. 
