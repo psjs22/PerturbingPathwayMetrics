@@ -344,4 +344,6 @@ xlh = xlabel('Pathway');
 xlh.Position(2)= xlh.Position(2) -0.12;
 ylabel('Change in Contribution Metric')
 
-
+%% Improvement from conservation actions
+cCPcons = cp2CP - cpCP;
+cCPtildecons = cp2CPtilde - cpCPtilde; 
