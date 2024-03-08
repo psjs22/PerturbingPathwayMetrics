@@ -347,3 +347,94 @@ ylabel('Change in Contribution Metric')
 %% Improvement from conservation actions
 cCPcons = cp2CP - cpCP;
 cCPtildecons = cp2CPtilde - cpCPtilde; 
+
+%% Reorganise storage of C metrics for plotting in R
+% store data related to change in C(P) following threats
+CPthreats4R = cell(28,4);
+for path = 1:28
+    CPthreats4R{path,1} = path; 
+    CPthreats4R{path,2} = cCP_change(path); % change in C(P)
+    CPthreats4R{path,3} = char(84); % perturbation
+    CPthreats4R{path,4} = char(83); % metric
+end 
+% store data related to change in C(P) following threats and conservation
+CPcons4R = cell(28,4);
+for path = 1:28
+    CPcons4R{path,1} = path;
+    CPcons4R{path,2} = cCP_change2(path); % change in C(P)
+    CPcons4R{path,3} = char(67); % pert
+    CPcons4R{path,4} = char(83); % metric
+end 
+% store data related to change in Ctilde(P) following threats
+CPtildethreats4R = cell(28,4); 
+for path = 1:28
+    CPtildethreats4R{path,1} = path;
+    CPtildethreats4R{path,2} = cCPtilde_change(path); % change in Ctilde(P)
+    CPtildethreats4R{path,3} = char(84); % pert
+    CPtildethreats4R{path,4} = char(77); % metric
+end 
+% store data related to change in Ctilde(P) following threats and conservation
+CPtildecons4R = cell(28,4); % to 
+for path = 1:28
+    CPtildecons4R{path,1} = path;
+    CPtildecons4R{path,2} = cCPtilde_change2(path); % change in Ctilde(P)
+    CPtildecons4R{path,3} = char(67); % pert
+    CPtildecons4R{path,4} = char(77); % metric
+end 
+% store data related to change in habitat Cmetric following threats
+Chabitatthreats4R = cell(1,4); 
+Chabitatthreats4R{1,1} = 0; 
+Chabitatthreats4R{1,2} = ChP_change(2); % value
+Chabitatthreats4R{1,3} = char(84); % pert
+Chabitatthreats4R{1,4} = char(72); % metric 
+% store data related to change in habitat Cmetric following threats and conservation
+Chabitatcons4R = cell(1,4);
+Chabitatcons4R{1,1} = 0; 
+Chabitatcons4R{1,2} = ChP_change2(2); % value
+Chabitatcons4R{1,3} = char(67); % pert
+Chabitatcons4R{1,4} = char(72); % metric 
+
+% Combine data for all Cmetrics above into one dataframe
+Monarch2data4R = cell(28*4+2,5);
+for ii = 1:length(Monarch2data4R)
+    if ii == 1  % Store Habitat metrics pert by threats
+        Monarch2data4R{ii,1} = 0; % pathway 0
+        Monarch2data4R{ii,2} = ChP_change(2); % value
+        Monarch2data4R{ii,3} = char(84); % pert 
+        Monarch2data4R{ii,4} = char(72); % metric
+        Monarch2data4R{ii,5} = 0.5; % x value in plot
+    elseif ii == 2 % Store Habitat metrics pert by threats and cons
+        Monarch2data4R{ii,1} = 0; % pathway 0
+        Monarch2data4R{ii,2} = ChP_change2(2); % value
+        Monarch2data4R{ii,3} = char(67); % pert 
+        Monarch2data4R{ii,4} = char(72); % metric
+        Monarch2data4R{ii,5} = 0.5; % x value in plot
+    elseif ii >= 3 && ii <= 30 % Store Subpop metrics (CP) pert by threats
+        Monarch2data4R{ii,1} = ii-2; % path
+        Monarch2data4R{ii,2} = cCP_change(ii-2); % value
+        Monarch2data4R{ii,3} = char(84); % pert 
+        Monarch2data4R{ii,4} = char(83); % metric
+        Monarch2data4R{ii,5} = ii-2+0.3; % x value in plot
+    elseif ii >= 31 && ii <= 58 % Store Subpop metrics (CP) pert by threats and cons
+        Monarch2data4R{ii,1} = ii-30; % path
+        Monarch2data4R{ii,2} = cCP_change2(ii-30); % value
+        Monarch2data4R{ii,3} = char(67); % pert 
+        Monarch2data4R{ii,4} = char(83); % metric
+        Monarch2data4R{ii,5} = ii-30+0.3; % x value in plot
+    elseif ii >= 59 && ii <= 86 % Store Metapop metrics (CPtilde) pert by threats
+        Monarch2data4R{ii,1} = ii-58; % path
+        Monarch2data4R{ii,2} = cCPtilde_change(ii-58); % value
+        Monarch2data4R{ii,3} = char(84); % pert 
+        Monarch2data4R{ii,4} = char(77); % metric
+        Monarch2data4R{ii,5} = ii-58+0.7; % x value in plot
+    elseif ii >= 87 && ii <= 114 % Store Metapop metrics (CPtilde) pert by threats and cons
+        Monarch2data4R{ii,1} = ii-86; % path
+        Monarch2data4R{ii,2} = cCPtilde_change2(ii-86); % value
+        Monarch2data4R{ii,3} = char(67); % pert 
+        Monarch2data4R{ii,4} = char(77); % metric
+        Monarch2data4R{ii,5} = ii-86+0.7; % x value in plot
+    end
+end
+
+% save data as csv file
+writecell(Monarch2data4R,'...\Monarch2data.csv'); % save to same location as code 
