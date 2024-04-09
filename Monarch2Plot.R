@@ -18,4 +18,19 @@ ggplot() +
   theme_minimal() + # remove axes
   geom_hline(aes(yintercept=0)) + # add y axis
   scale_x_continuous(breaks = seq(0,29,2), minor_breaks = seq(0,29,1)) +
-  theme(legend.position = 'bottom')
+  theme(legend.position = 'bottom', legend.box = 'vertical', legend.margin = margin()) +
+  theme(text=element_text(size=12), axis.title = element_text(size=14)) # change font size
+
+# save high resolution image
+library(gridExtra)
+#save .png image
+png(".../Monarch2plot.png", width=18, height=12, units='cm', res=300) #set size and res #add in folder of where to save file
+grid.arrange (Fig) # make plot
+dev.off()
+#save .tiff image
+tiff(".../Monarch2plot.tiff", width=18, height=12, units='cm', res=300) #set size and res #add in folder of where to save file
+grid.arrange (Fig) # make plot
+dev.off()
+#save .eps image
+ggsave(".../Monarch2plot.eps", width=18, height=12, units='cm', dpi=300) #set size and res #add in folder of where to save file
+
